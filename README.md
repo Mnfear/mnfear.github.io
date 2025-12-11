@@ -1,2 +1,1764 @@
-# mnfear.github.io
-btg academy
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BTG Academy — Bridge The Gap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --kfh-green: #00A859;
+      --kfh-green-dark: #008A4A;
+      --kfh-gold: #C9A227;
+      --bg-deep: #0A0F0D;
+      --bg-card: rgba(255,255,255,0.03);
+      --text-primary: #FFFFFF;
+      --text-secondary: rgba(255,255,255,0.6);
+      --text-muted: rgba(255,255,255,0.35);
+      --border: rgba(255,255,255,0.08);
+      --glow: rgba(0,168,89,0.4);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-snap-type: y mandatory;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: 'Geist', -apple-system, sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Grain Overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 10000;
+    }
+
+    /* Navigation */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 1.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      background: linear-gradient(to bottom, var(--bg-deep), transparent);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .nav-logo svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    .nav-logo span {
+      font-weight: 600;
+      font-size: 0.875rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .timer {
+      font-family: 'Geist Mono', monospace;
+      font-size: 1rem;
+      color: var(--kfh-green);
+      background: rgba(0,168,89,0.1);
+      padding: 0.5rem 1rem;
+      border-radius: 100px;
+      border: 1px solid rgba(0,168,89,0.2);
+      cursor: pointer;
+    }
+
+    .progress-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: var(--kfh-green);
+      z-index: 1000;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 20px var(--glow);
+    }
+
+    /* Slide Container */
+    .slide {
+      min-height: 100vh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 6rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide-inner {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .slide-inner.centered {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 100%;
+    }
+
+    .slide-number {
+      position: absolute;
+      bottom: 3rem;
+      right: 3rem;
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* Typography */
+    .headline {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+      text-align: center;
+      width: 100%;
+    }
+
+    .headline em {
+      font-style: italic;
+      color: var(--kfh-green);
+    }
+
+    .headline .gold {
+      color: var(--kfh-gold);
+    }
+
+    .subhead {
+      font-size: 1.25rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      max-width: 600px;
+      line-height: 1.5;
+      margin-bottom: 2rem;
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--kfh-green);
+      margin-bottom: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .label::before {
+      content: '';
+      width: 2rem;
+      height: 1px;
+      background: var(--kfh-green);
+    }
+
+    /* ============================================
+       BRIDGE ANIMATION - SLIDE 1
+       ============================================ */
+    .bridge-scene {
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+      height: 280px;
+      margin: 1rem auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Platforms (The Cliffs) */
+    .platform {
+      position: absolute;
+      bottom: 60px;
+      width: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .platform.left { left: 0; }
+    .platform.right { right: 0; }
+
+    .platform-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--bg-deep);
+      border: 2px solid var(--kfh-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 0 30px rgba(0,168,89,0.3);
+      margin-bottom: 0.75rem;
+      z-index: 20;
+    }
+
+    .platform.right .platform-icon {
+      border-color: var(--kfh-gold);
+      box-shadow: 0 0 30px rgba(201,162,39,0.3);
+    }
+
+    .platform-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .platform-sublabel {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* The Chasm */
+    .chasm {
+      position: absolute;
+      bottom: 0;
+      left: 140px;
+      right: 140px;
+      height: 60px;
+      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.9) 100%);
+    }
+
+    .chasm-label {
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 1rem;
+      font-style: italic;
+      color: rgba(255,100,100,0.5);
+      white-space: nowrap;
+      transition: opacity 1s ease;
+    }
+
+    .chasm-label.hidden { opacity: 0; }
+
+    /* Bridge Container */
+    .bridge-wrapper {
+      position: absolute;
+      bottom: 80px;
+      left: 140px;
+      right: 140px;
+      height: 140px;
+    }
+
+    /* Bridge Towers */
+    .tower {
+      position: absolute;
+      bottom: 0;
+      width: 16px; /* Slightly thicker */
+      height: 0;
+      background: var(--kfh-green-dark);
+      border: 1px solid var(--kfh-green);
+      border-bottom: none;
+      box-shadow: 0 0 15px rgba(0,168,89,0.5);
+      z-index: 5;
+    }
+
+    /* Anchor towers more firmly */
+    .tower.left { left: 0; }
+    .tower.right { right: 0; }
+
+    .bridge-wrapper.animate .tower {
+      animation: towerGrow 0.8s ease-out forwards;
+    }
+    
+    .bridge-wrapper.animate .tower.right {
+      animation-delay: 0.15s;
+    }
+
+    @keyframes towerGrow {
+      to { height: 120px; }
+    }
+
+    /* Bridge Cables */
+    .cables {
+      position: absolute;
+      top: 20px;
+      left: 8px; /* Adjusted for tower width */
+      right: 8px;
+      bottom: 14px; /* Connect to top of deck */
+      pointer-events: none;
+      overflow: visible;
+      z-index: 4;
+    }
+
+    .cables svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .cable-path {
+      fill: none;
+      stroke: var(--kfh-green);
+      stroke-width: 3;
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      filter: drop-shadow(0 0 5px rgba(0,168,89,0.6));
+    }
+
+    .suspender {
+      stroke: rgba(0,168,89,0.4);
+      stroke-width: 1;
+      stroke-dasharray: 100;
+      stroke-dashoffset: 100;
+    }
+
+    .bridge-wrapper.animate .cable-path {
+      animation: drawCable 1.5s ease-out forwards;
+      animation-delay: 0.8s;
+    }
+
+    .bridge-wrapper.animate .suspender {
+      animation: drawSuspender 0.5s ease-out forwards;
+    }
+
+    .bridge-wrapper.animate .suspender:nth-child(2) { animation-delay: 1.5s; }
+    .bridge-wrapper.animate .suspender:nth-child(3) { animation-delay: 1.6s; }
+    .bridge-wrapper.animate .suspender:nth-child(4) { animation-delay: 1.7s; }
+    .bridge-wrapper.animate .suspender:nth-child(5) { animation-delay: 1.8s; }
+    .bridge-wrapper.animate .suspender:nth-child(6) { animation-delay: 1.9s; }
+    .bridge-wrapper.animate .suspender:nth-child(7) { animation-delay: 2.0s; }
+    .bridge-wrapper.animate .suspender:nth-child(8) { animation-delay: 2.1s; }
+
+    @keyframes drawCable { to { stroke-dashoffset: 0; } }
+    @keyframes drawSuspender { to { stroke-dashoffset: 0; } }
+
+    /* Bridge Deck - THICKER */
+    .deck {
+      position: absolute;
+      bottom: 10px;
+      left: 0;
+      right: 0;
+      height: 16px; /* Thicker deck */
+      background: #00A859;
+      border-top: 2px solid #55ff99;
+      border-bottom: 2px solid #005522;
+      transform: scaleX(0);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+      z-index: 6;
+    }
+    
+    /* Roadway markings */
+    .deck::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: repeating-linear-gradient(90deg, transparent 0, transparent 10px, rgba(0,0,0,0.3) 10px, rgba(0,0,0,0.3) 20px);
+      transform: translateY(-50%);
+    }
+
+    .bridge-wrapper.animate .deck {
+      animation: buildDeck 1s ease-out forwards;
+      animation-delay: 1.8s;
+    }
+
+    @keyframes buildDeck { to { transform: scaleX(1); } }
+
+    /* Pulse & Particles */
+    .pulse {
+      position: absolute;
+      bottom: 18px; /* Adjusted for thicker deck */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--kfh-green);
+      opacity: 0;
+      z-index: 20;
+    }
+
+    .bridge-wrapper.animate .pulse {
+      animation: pulseEffect 1s ease-out forwards;
+      animation-delay: 2.8s;
+    }
+
+    @keyframes pulseEffect {
+      0% { opacity: 1; transform: translateX(-50%) scale(1); box-shadow: 0 0 0 0 rgba(0,168,89,0.8); }
+      100% { opacity: 0; transform: translateX(-50%) scale(4); box-shadow: 0 0 0 40px rgba(0,168,89,0); }
+    }
+
+    .particles {
+      position: absolute;
+      bottom: 18px; /* Adjusted */
+      left: 0;
+      right: 0;
+      height: 20px;
+      opacity: 0;
+      z-index: 15;
+    }
+
+    .bridge-wrapper.animate .particles {
+      animation: fadeIn 0.5s ease forwards;
+      animation-delay: 3.0s;
+    }
+
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    .particle {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 10px;
+      height: 6px;
+      border-radius: 3px;
+      opacity: 0;
+    }
+
+    .particle.gold { background: var(--kfh-gold); box-shadow: 0 0 12px var(--kfh-gold); }
+    .particle.green { background: var(--text-primary); box-shadow: 0 0 12px var(--text-primary); }
+
+    .bridge-wrapper.animate .particle.gold { animation: flowRight 2.5s ease-in-out infinite; }
+    .bridge-wrapper.animate .particle.green { animation: flowLeft 2.5s ease-in-out infinite; }
+
+    .particle:nth-child(1) { animation-delay: 3.1s; }
+    .particle:nth-child(2) { animation-delay: 3.6s; }
+    .particle:nth-child(3) { animation-delay: 4.1s; }
+    .particle:nth-child(4) { animation-delay: 3.3s; }
+    .particle:nth-child(5) { animation-delay: 3.8s; }
+    .particle:nth-child(6) { animation-delay: 4.3s; }
+
+    @keyframes flowRight {
+      0%, 100% { left: 0; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      99% { left: 100%; opacity: 0; }
+    }
+
+    @keyframes flowLeft {
+      0%, 100% { left: 100%; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      99% { left: 0; opacity: 0; }
+    }
+
+    .bridge-label {
+      position: absolute;
+      bottom: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 1.25rem;
+      color: var(--kfh-green);
+      white-space: nowrap;
+      opacity: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .bridge-wrapper.animate .bridge-label {
+      animation: fadeSlideUp 0.6s ease forwards;
+      animation-delay: 3.0s;
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* Stats - STRICT CENTERING */
+    .bridge-stats {
+      display: flex;
+      justify-content: center; /* Center flex items horizontally */
+      flex-wrap: wrap; /* Allow wrapping on small screens */
+      gap: 4rem;
+      margin: 0 auto 2rem auto; /* Auto margin for block centering */
+      padding: 0 1rem;
+      opacity: 0;
+      width: 100%;
+      max-width: 900px; /* Align with bridge width */
+      text-align: center; /* Text alignment fallback */
+    }
+
+    .bridge-stats.visible {
+      animation: fadeSlideUp 0.8s ease forwards;
+    }
+
+    .bridge-stat {
+      text-align: center;
+      flex: 0 1 auto; /* Don't stretch unnecessarily */
+    }
+
+    .bridge-stat-value {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 2.5rem;
+      color: var(--kfh-green);
+      line-height: 1;
+    }
+
+    .bridge-stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+
+    /* ============================================
+       GAP VISUAL - SLIDE 2
+       ============================================ */
+    .gap-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 3rem 0;
+    }
+
+    .gap-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 2rem 2.5rem;
+      text-align: center;
+    }
+
+    .gap-box.left { border-radius: 1rem 0 0 1rem; border-right: none; }
+    .gap-box.right { border-radius: 0 1rem 1rem 0; border-left: none; }
+
+    .gap-box h3 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .gap-box p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .gap-middle {
+      width: 150px;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: repeating-linear-gradient(90deg, var(--border) 0px, var(--border) 6px, transparent 6px, transparent 12px);
+    }
+
+    .gap-question {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 3rem;
+      color: var(--kfh-gold);
+      animation: pulse2 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse2 {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.1); }
+    }
+
+    /* ============================================
+       FLOW STEPS - SLIDE 3
+       ============================================ */
+    .flow-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin: 3rem 0;
+      position: relative;
+    }
+
+    .flow-container::before {
+      content: '';
+      position: absolute;
+      top: 3.5rem;
+      left: 12%;
+      right: 12%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--kfh-green), var(--kfh-gold));
+    }
+
+    .flow-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .flow-step.visible {
+      animation: flowIn 0.5s ease forwards;
+    }
+
+    .flow-step:nth-child(1).visible { animation-delay: 0s; }
+    .flow-step:nth-child(2).visible { animation-delay: 0.15s; }
+    .flow-step:nth-child(3).visible { animation-delay: 0.3s; }
+    .flow-step:nth-child(4).visible { animation-delay: 0.45s; }
+
+    @keyframes flowIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .flow-icon {
+      width: 4.5rem;
+      height: 4.5rem;
+      border-radius: 50%;
+      background: var(--bg-deep);
+      border: 2px solid var(--kfh-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 0 25px rgba(0,168,89,0.2);
+    }
+
+    .flow-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .flow-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      max-width: 160px;
+      line-height: 1.4;
+    }
+
+    /* ============================================
+       PLATFORM - SLIDE 4
+       ============================================ */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 4rem;
+      align-items: center;
+      width: 100%;
+    }
+
+    .arch-center {
+      background: linear-gradient(135deg, rgba(0,168,89,0.1), rgba(0,168,89,0.03));
+      border: 2px solid var(--kfh-green);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .arch-center h3 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 1.5rem;
+      color: var(--kfh-green);
+    }
+
+    .arch-center > p {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
+    }
+
+    .arch-features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .arch-feature {
+      background: rgba(0,0,0,0.3);
+      border-radius: 0.5rem;
+      padding: 0.6rem;
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+    }
+
+    .arch-boxes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .arch-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+    }
+
+    .arch-box h4 {
+      font-size: 0.8rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .arch-box p {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    /* ============================================
+       PORTFOLIO - SLIDE 5
+       ============================================ */
+    .portfolio-preview {
+      background: #111;
+      border-radius: 1rem;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .portfolio-header {
+      background: #1a1a1a;
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot.red { background: #ff5f57; }
+    .dot.yellow { background: #febc2e; }
+    .dot.green { background: #28c840; }
+
+    .portfolio-url {
+      margin-left: 1rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-family: 'Geist Mono', monospace;
+    }
+
+    .portfolio-body {
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 1.5rem;
+    }
+
+    .portfolio-sidebar {
+      border-right: 1px solid var(--border);
+      padding-right: 1.5rem;
+    }
+
+    .avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--kfh-green), var(--kfh-gold));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .portfolio-name {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .portfolio-track {
+      font-size: 0.75rem;
+      color: var(--kfh-green);
+      margin: 0.25rem 0 0.75rem;
+    }
+
+    .portfolio-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .score-box {
+      background: rgba(0,168,89,0.1);
+      border: 1px solid rgba(0,168,89,0.3);
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .score-box h4 {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.25rem;
+    }
+
+    .score-value {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 2rem;
+      color: var(--kfh-green);
+    }
+
+    .artifacts { display: flex; flex-direction: column; gap: 0.75rem; }
+
+    .artifact {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      display: grid;
+      grid-template-columns: 40px 1fr auto;
+      gap: 0.75rem;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+
+    .artifact:hover {
+      border-color: var(--kfh-green);
+      background: rgba(0,168,89,0.03);
+    }
+
+    .artifact-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 0.5rem;
+      background: var(--bg-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .artifact-info h4 {
+      font-size: 0.85rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .artifact-info p {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .artifact-grade {
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--kfh-green);
+      background: rgba(0,168,89,0.1);
+      padding: 0.3rem 0.6rem;
+      border-radius: 100px;
+    }
+
+    /* ============================================
+       COMPARISON - SLIDE 6
+       ============================================ */
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .comparison-col {
+      padding: 1.5rem;
+      border-radius: 1rem;
+    }
+
+    .comparison-col.bad {
+      background: rgba(255,100,100,0.05);
+      border: 1px solid rgba(255,100,100,0.2);
+    }
+
+    .comparison-col.good {
+      background: rgba(0,168,89,0.05);
+      border: 1px solid rgba(0,168,89,0.3);
+    }
+
+    .comparison-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    .comparison-col.bad .comparison-title { color: #ff6b6b; }
+    .comparison-col.good .comparison-title { color: var(--kfh-green); }
+
+    .comparison-list {
+      list-style: none;
+    }
+
+    .comparison-list li {
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .comparison-list li:last-child { border-bottom: none; }
+
+    .comparison-footer {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .comparison-col.good .comparison-footer {
+      color: var(--kfh-green);
+      font-style: normal;
+      font-weight: 500;
+    }
+
+    /* ============================================
+       CONCLUSION - SLIDE 7
+       ============================================ */
+    .conclusion {
+      text-align: center;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .conclusion-headline {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 400;
+      line-height: 1.15;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .conclusion.visible .conclusion-headline {
+      animation: fadeSlideUp 0.8s ease forwards;
+    }
+
+    .conclusion-headline em { font-style: italic; color: var(--kfh-green); }
+    .conclusion-headline .gold { color: var(--kfh-gold); }
+
+    /* Conclusion Bridge */
+    .conclusion-bridge {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      height: 60px;
+      margin: 2rem auto;
+      opacity: 0;
+    }
+
+    .conclusion.visible .conclusion-bridge {
+      animation: fadeIn 0.6s ease forwards;
+      animation-delay: 0.4s;
+    }
+
+    .conclusion-bridge-line {
+      position: absolute;
+      top: 50%;
+      left: 30px;
+      right: 30px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--kfh-green), var(--kfh-gold), var(--kfh-green));
+      transform: translateY(-50%);
+      border-radius: 2px;
+      box-shadow: 0 0 20px rgba(0,168,89,0.4);
+    }
+
+    .conclusion-node {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--bg-deep);
+      border: 2px solid var(--kfh-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      box-shadow: 0 0 20px rgba(0,168,89,0.3);
+    }
+
+    .conclusion-node.left { left: 0; }
+    .conclusion-node.center {
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 56px;
+      height: 56px;
+      border-color: var(--kfh-gold);
+      box-shadow: 0 0 25px rgba(201,162,39,0.4);
+      font-size: 1.4rem;
+    }
+    .conclusion-node.right {
+      right: 0;
+      border-color: var(--kfh-gold);
+      box-shadow: 0 0 20px rgba(201,162,39,0.3);
+    }
+
+    /* Conclusion Particles */
+    .conclusion-particles {
+      position: absolute;
+      top: 50%;
+      left: 50px;
+      right: 50px;
+      height: 10px;
+      transform: translateY(-50%);
+    }
+
+    .c-particle {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--kfh-gold);
+      box-shadow: 0 0 10px var(--kfh-gold);
+      opacity: 0;
+    }
+
+    .conclusion.visible .c-particle {
+      animation: cFlow 2s ease-in-out infinite;
+    }
+
+    .c-particle:nth-child(1) { animation-delay: 0.6s; }
+    .c-particle:nth-child(2) { animation-delay: 1.3s; }
+    .c-particle:nth-child(3) { animation-delay: 2.0s; }
+
+    @keyframes cFlow {
+      0%, 100% { left: 0; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      99% { left: 100%; opacity: 0; }
+    }
+
+    /* Pillars */
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin: 2.5rem 0;
+      opacity: 0;
+    }
+
+    .conclusion.visible .pillars {
+      animation: fadeSlideUp 0.6s ease forwards;
+      animation-delay: 0.8s;
+    }
+
+    .pillar {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.25rem;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .pillar:hover {
+      border-color: var(--kfh-green);
+      transform: translateY(-4px);
+    }
+
+    .pillar-icon {
+      font-size: 1.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .pillar h3 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 1.1rem;
+      color: var(--kfh-green);
+      margin-bottom: 0.5rem;
+    }
+
+    .pillar p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Final Line */
+    .final-line {
+      margin-top: 2rem;
+      opacity: 0;
+    }
+
+    .conclusion.visible .final-line {
+      animation: fadeSlideUp 0.6s ease forwards;
+      animation-delay: 1.2s;
+    }
+
+    .final-line p {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 1.5rem;
+      font-style: italic;
+      color: var(--text-secondary);
+    }
+
+    .final-line em {
+      color: var(--kfh-green);
+      font-style: normal;
+    }
+
+    /* Partners */
+    .partners {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1.5rem;
+      margin-top: 2rem;
+      opacity: 0;
+    }
+
+    .conclusion.visible .partners {
+      animation: fadeIn 0.6s ease forwards;
+      animation-delay: 1.5s;
+    }
+
+    .partners span {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .partner-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    /* ============================================
+       UTILITIES
+       ============================================ */
+    .keyboard-hint {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      background: rgba(0,0,0,0.6);
+      padding: 0.5rem 1rem;
+      border-radius: 100px;
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      transition: opacity 0.3s ease;
+    }
+
+    .keyboard-hint.hidden { opacity: 0; pointer-events: none; }
+
+    .key {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-family: 'Geist Mono', monospace;
+    }
+
+    .speaker-notes {
+      position: fixed;
+      bottom: 5rem;
+      left: 2rem;
+      right: 2rem;
+      background: rgba(0,0,0,0.95);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.25rem 1.5rem;
+      max-height: 180px;
+      overflow-y: auto;
+      z-index: 1001;
+      backdrop-filter: blur(20px);
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    .speaker-notes.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .speaker-notes h4 {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--kfh-gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .speaker-notes p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .slide { padding: 4rem 2rem; }
+      .flow-container { grid-template-columns: repeat(2, 1fr); }
+      .flow-container::before { display: none; }
+      .two-col { grid-template-columns: 1fr; gap: 2rem; }
+      .portfolio-body { grid-template-columns: 1fr; }
+      .portfolio-sidebar { border-right: none; border-bottom: 1px solid var(--border); padding-right: 0; padding-bottom: 1rem; }
+      .comparison { grid-template-columns: 1fr; }
+      .pillars { grid-template-columns: 1fr; }
+      .bridge-stats { flex-direction: column; gap: 1.5rem; }
+      .arch-boxes { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-logo">
+      <svg viewBox="0 0 32 32" fill="none">
+        <path d="M16 2L2 9v14l14 7 14-7V9L16 2z" stroke="#00A859" stroke-width="2" fill="none"/>
+        <path d="M16 8l8 4v8l-8 4-8-4v-8l8-4z" fill="#00A859"/>
+      </svg>
+      <span>BTG Academy</span>
+    </div>
+    <div class="timer" id="timer" title="Click to start/stop, double-click to reset">00:00</div>
+  </nav>
+
+  <div class="progress-bar" id="progress"></div>
+
+  <!-- SLIDE 1: Bridge Animation -->
+  <section class="slide" id="slide-1" data-notes="Let the bridge animation play fully. This visual IS the pitch. The bridge builds, data flows, stats appear. Pause and let it breathe.">
+    <div class="slide-inner centered">
+      <div class="label">The Talent Pipeline</div>
+      <h1 class="headline"><em>Bridge</em> The Gap</h1>
+      <p class="subhead">From classroom to career — connected.</p>
+
+      <!-- Stats STRICTLY CENTERED ABOVE BRIDGE -->
+      <div class="bridge-stats" id="stats-row">
+        <div class="bridge-stat">
+          <div class="bridge-stat-value">285</div>
+          <div class="bridge-stat-label">applicants per vacancy</div>
+        </div>
+        <div class="bridge-stat">
+          <div class="bridge-stat-value">69.7%</div>
+          <div class="bridge-stat-label">unemployed are 20-29</div>
+        </div>
+        <div class="bridge-stat">
+          <div class="bridge-stat-value">50%</div>
+          <div class="bridge-stat-label">faster time-to-productivity</div>
+        </div>
+      </div>
+
+      <div class="bridge-scene" id="bridge-scene">
+        <div class="platform left">
+          <div class="platform-icon">🎓</div>
+          <div class="platform-label">University</div>
+          <div class="platform-sublabel">Theory & Concepts</div>
+        </div>
+
+        <div class="platform right">
+          <div class="platform-icon">🏦</div>
+          <div class="platform-label">KFH</div>
+          <div class="platform-sublabel">Execution & Systems</div>
+        </div>
+
+        <div class="chasm">
+          <div class="chasm-label" id="chasm-label">The Competency Gap</div>
+        </div>
+
+        <div class="bridge-wrapper" id="bridge">
+          <div class="tower left"></div>
+          <div class="tower right"></div>
+          <div class="cables">
+            <!-- Main Suspension Cable (Catenary Curve) -->
+            <svg viewBox="0 0 620 140" preserveAspectRatio="none">
+              <path class="cable-path" d="M0,0 Q310,130 620,0" />
+              <!-- Vertical Suspenders -->
+              <line class="suspender" x1="60" y1="20" x2="60" y2="120" />
+              <line class="suspender" x1="120" y1="45" x2="120" y2="120" />
+              <line class="suspender" x1="180" y1="65" x2="180" y2="120" />
+              <line class="suspender" x1="240" y1="80" x2="240" y2="120" />
+              <line class="suspender" x1="380" y1="80" x2="380" y2="120" />
+              <line class="suspender" x1="440" y1="65" x2="440" y2="120" />
+              <line class="suspender" x1="500" y1="45" x2="500" y2="120" />
+              <line class="suspender" x1="560" y1="20" x2="560" y2="120" />
+            </svg>
+          </div>
+          <div class="deck"></div>
+          <div class="pulse"></div>
+          <div class="particles">
+            <div class="particle gold"></div>
+            <div class="particle gold"></div>
+            <div class="particle gold"></div>
+            <div class="particle green"></div>
+            <div class="particle green"></div>
+            <div class="particle green"></div>
+          </div>
+          <div class="bridge-label">✓ BTG Academy</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-number">01 / 07</div>
+  </section>
+
+  <!-- SLIDE 2: The Gap -->
+  <section class="slide" id="slide-2" data-notes="Universities teach theory, we need execution. One stat: 69.7% of unemployed are 20-29. Keep it simple.">
+    <div class="slide-inner centered">
+      <div class="label">The Competency Gap</div>
+      <h1 class="headline">Universities produce <em>graduates.</em><br>KFH needs <em>practitioners.</em></h1>
+
+      <div class="gap-visual">
+        <div class="gap-box left">
+          <h3>🎓 University</h3>
+          <p>Theory & Concepts</p>
+        </div>
+        <div class="gap-middle">
+          <span class="gap-question">?</span>
+        </div>
+        <div class="gap-box right">
+          <h3>🏦 KFH</h3>
+          <p>Execution & Systems</p>
+        </div>
+      </div>
+
+      <p class="subhead" style="text-align: center;">
+        <strong style="color: var(--kfh-gold);">69.7%</strong> of unemployed Kuwaitis are ages 20–29.
+        <span style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">Source: Times Kuwait, May 2024</span>
+      </p>
+    </div>
+    <div class="slide-number">02 / 07</div>
+  </section>
+
+  <!-- SLIDE 3: How It Works -->
+  <section class="slide" id="slide-3" data-notes="Walk through each step. Department builds, real systems, mentor scores, portfolio output. Payoff: 'It's already done.'">
+    <div class="slide-inner centered">
+      <div class="label">The Model</div>
+      <h1 class="headline">How <em>BTG Academy</em> works</h1>
+
+      <div class="flow-container" id="flow">
+        <div class="flow-step">
+          <div class="flow-icon">🏢</div>
+          <div class="flow-title">Department Builds</div>
+          <div class="flow-desc">Treasury builds Treasury. Their workflows, their standards.</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-icon">💻</div>
+          <div class="flow-title">Student Completes</div>
+          <div class="flow-desc">Tasks on sanitized KFH systems. Not videos — actual work.</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-icon">✓</div>
+          <div class="flow-title">Mentor Scores</div>
+          <div class="flow-desc">KFH staff review against our rubric. Real feedback.</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-icon">📁</div>
+          <div class="flow-title">Portfolio Ready</div>
+          <div class="flow-desc">Student graduates with proof. Not a certificate — artifacts.</div>
+        </div>
+      </div>
+
+      <p class="subhead" style="text-align: center; margin-top: 1rem;">
+        When they interview, the manager doesn't ask <em>"Can you do this?"</em><br>
+        They open the portfolio. <strong style="color: var(--kfh-green);">It's already done.</strong>
+      </p>
+    </div>
+    <div class="slide-number">03 / 07</div>
+  </section>
+
+  <!-- SLIDE 4: Platform -->
+  <section class="slide" id="slide-4" data-notes="Technical credibility. Open edX = Harvard, MIT, IBM. Managed hosting = no IT burden. Quick and confident.">
+    <div class="slide-inner">
+      <div class="two-col">
+        <div>
+          <div class="label">The Platform</div>
+          <h1 class="headline" style="font-size: clamp(2rem, 4vw, 3rem); text-align: left;">Enterprise LMS.<br><em>Zero</em> overhead.</h1>
+          <p class="subhead" style="margin-top: 1rem; font-size: 1.1rem; text-align: left;">
+            Open edX powers Harvard, MIT, and IBM. Managed hosting — no servers for IT.
+          </p>
+        </div>
+        <div>
+          <div class="arch-center">
+            <h3>Open edX</h3>
+            <p>Managed Hosting</p>
+            <div class="arch-features">
+              <div class="arch-feature">📚 Courses</div>
+              <div class="arch-feature">💬 Forums</div>
+              <div class="arch-feature">📊 Grades</div>
+              <div class="arch-feature">🎯 SCORM</div>
+              <div class="arch-feature">📝 Quizzes</div>
+              <div class="arch-feature">🏆 Certs</div>
+            </div>
+          </div>
+          <div class="arch-boxes">
+            <div class="arch-box">
+              <h4>📥 Content In</h4>
+              <p>KFH Modules, Microsoft Learn, LinkedIn Learning</p>
+            </div>
+            <div class="arch-box">
+              <h4>💬 Comms</h4>
+              <p>MS Teams for mentor calls</p>
+            </div>
+            <div class="arch-box">
+              <h4>📈 Data Out</h4>
+              <p>Power BI hiring pipeline</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-number">04 / 07</div>
+  </section>
+
+  <!-- SLIDE 5: Portfolio -->
+  <section class="slide" id="slide-5" data-notes="SHOW don't tell. This mockup IS proof. Real artifacts, real scores. Hiring managers see this.">
+    <div class="slide-inner centered">
+      <div class="label">What Hiring Managers See</div>
+      <h1 class="headline" style="font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1.5rem;"><em>Portfolios,</em> not promises.</h1>
+
+      <div class="portfolio-preview">
+        <div class="portfolio-header">
+          <div class="dot red"></div>
+          <div class="dot yellow"></div>
+          <div class="dot green"></div>
+          <span class="portfolio-url">btg-academy.kfh.com/portfolio/ahmad-almansoori</span>
+        </div>
+        <div class="portfolio-body">
+          <div class="portfolio-sidebar">
+            <div class="avatar">👨‍💼</div>
+            <div class="portfolio-name">Ahmad Al-Mansoori</div>
+            <div class="portfolio-track">Treasury Operations</div>
+            <div class="portfolio-meta">Kuwait University '26<br>Finance Major</div>
+            <div class="score-box">
+              <h4>Readiness Score</h4>
+              <div class="score-value">87%</div>
+            </div>
+          </div>
+          <div class="artifacts">
+            <div class="artifact">
+              <div class="artifact-icon">📊</div>
+              <div class="artifact-info">
+                <h4>FX Position Report</h4>
+                <p>Daily position summary in KFH Treasury format</p>
+              </div>
+              <div class="artifact-grade">92%</div>
+            </div>
+            <div class="artifact">
+              <div class="artifact-icon">📈</div>
+              <div class="artifact-info">
+                <h4>Liquidity Forecast Model</h4>
+                <p>30-day projection using sanitized data</p>
+              </div>
+              <div class="artifact-grade">88%</div>
+            </div>
+            <div class="artifact">
+              <div class="artifact-icon">⚠️</div>
+              <div class="artifact-info">
+                <h4>Limit Breach Escalation</h4>
+                <p>Response to simulated breach scenario</p>
+              </div>
+              <div class="artifact-grade">85%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-number">05 / 07</div>
+  </section>
+
+  <!-- SLIDE 6: Moat -->
+  <section class="slide" id="slide-6" data-notes="Competitive moat. Our workflows = our content. NBK can't copy it. Deliver the line: 'NBK can build theirs. They can't build ours.'">
+    <div class="slide-inner centered">
+      <div class="label">Competitive Moat</div>
+      <h1 class="headline">Why competitors <em>can't</em> copy this.</h1>
+
+      <div class="comparison">
+        <div class="comparison-col bad">
+          <div class="comparison-title">❌ Generic Training</div>
+          <ul class="comparison-list">
+            <li>External content anyone can license</li>
+            <li>Certificate of completion</li>
+            <li>"Trained in banking concepts"</li>
+            <li>Theoretical knowledge</li>
+          </ul>
+          <div class="comparison-footer">Coursera, LinkedIn Learning, generic academies</div>
+        </div>
+        <div class="comparison-col good">
+          <div class="comparison-title">✓ BTG Academy</div>
+          <ul class="comparison-list">
+            <li>Built on real KFH workflows</li>
+            <li>Scored portfolio of actual work</li>
+            <li>"Trained on KFH systems"</li>
+            <li>Proof of execution capability</li>
+          </ul>
+          <div class="comparison-footer">NBK can build theirs. They can't build ours.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-number">06 / 07</div>
+  </section>
+
+  <!-- SLIDE 7: Conclusion -->
+  <section class="slide" id="slide-7" data-notes="Bring it home. Slow down. Bridge returns complete. Three pillars. End on 'Portfolios, not promises.' Let it land.">
+    <div class="slide-inner centered">
+      <div class="conclusion" id="conclusion">
+        <h1 class="conclusion-headline">
+          The bridge is <em>ready.</em><br>
+          The talent is <span class="gold">waiting.</span>
+        </h1>
+
+        <div class="conclusion-bridge">
+          <div class="conclusion-bridge-line"></div>
+          <div class="conclusion-node left">🎓</div>
+          <div class="conclusion-node center">✓</div>
+          <div class="conclusion-node right">🏦</div>
+          <div class="conclusion-particles">
+            <div class="c-particle"></div>
+            <div class="c-particle"></div>
+            <div class="c-particle"></div>
+          </div>
+        </div>
+
+        <div class="pillars">
+          <div class="pillar">
+            <div class="pillar-icon">🏢</div>
+            <h3>Department-Built</h3>
+            <p>Real KFH workflows and systems — content no competitor can replicate.</p>
+          </div>
+          <div class="pillar">
+            <div class="pillar-icon">📁</div>
+            <h3>Portfolio-Proven</h3>
+            <p>Candidates arrive with scored artifacts — proof of work, not promises.</p>
+          </div>
+          <div class="pillar">
+            <div class="pillar-icon">⚡</div>
+            <h3>Pipeline-Ready</h3>
+            <p>Pre-trained practitioners who hit the ground running from day one.</p>
+          </div>
+        </div>
+
+        <div class="final-line">
+          <p><em>Portfolios, not promises.</em></p>
+        </div>
+
+        <div class="partners">
+          <span>In Partnership With</span>
+          <div class="partner-name">KFH</div>
+          <div class="partner-name">×</div>
+          <div class="partner-name">KFAS</div>
+          <div class="partner-name">×</div>
+          <div class="partner-name">Kuwait University</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-number">07 / 07</div>
+  </section>
+
+  <!-- Keyboard Hint -->
+  <div class="keyboard-hint" id="hint">
+    <span class="key">←</span><span class="key">→</span> Navigate
+    <span style="margin: 0 0.4rem;">|</span>
+    <span class="key">N</span> Notes
+    <span style="margin: 0 0.4rem;">|</span>
+    <span class="key">T</span> Timer
+  </div>
+
+  <!-- Speaker Notes -->
+  <div class="speaker-notes" id="notes">
+    <h4>Speaker Notes</h4>
+    <p id="notes-content">Press N to toggle speaker notes.</p>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 7;
+    let timerRunning = false;
+    let timerSeconds = 0;
+    let timerInterval = null;
+    let notesVisible = false;
+    let hintHidden = false;
+    let bridgeAnimated = false;
+
+    const slides = document.querySelectorAll('.slide');
+    const progressBar = document.getElementById('progress');
+    const timerEl = document.getElementById('timer');
+    const notesEl = document.getElementById('notes');
+    const notesContent = document.getElementById('notes-content');
+    const hintEl = document.getElementById('hint');
+    const bridgeEl = document.getElementById('bridge');
+    const bridgeScene = document.getElementById('bridge-scene');
+    const statsRow = document.getElementById('stats-row');
+    const chasmLabel = document.getElementById('chasm-label');
+    const conclusionEl = document.getElementById('conclusion');
+
+    function updateProgress() {
+      progressBar.style.width = `${((currentSlide - 1) / (totalSlides - 1)) * 100}%`;
+    }
+
+    function updateNotes() {
+      const slide = document.getElementById(`slide-${currentSlide}`);
+      notesContent.textContent = slide?.dataset.notes || 'No notes for this slide.';
+    }
+
+    function triggerBridge() {
+      if (bridgeAnimated) return;
+      bridgeAnimated = true;
+      bridgeEl.classList.add('animate');
+      setTimeout(() => chasmLabel.classList.add('hidden'), 1200);
+      // Trigger stats slightly later in the sequence
+      setTimeout(() => statsRow.classList.add('visible'), 3200);
+    }
+
+    function goToSlide(n) {
+      if (n < 1 || n > totalSlides) return;
+      currentSlide = n;
+      document.getElementById(`slide-${n}`).scrollIntoView({ behavior: 'smooth' });
+      updateProgress();
+      updateNotes();
+      triggerAnimations(n);
+      if (!hintHidden) {
+        setTimeout(() => { hintEl.classList.add('hidden'); hintHidden = true; }, 3000);
+      }
+    }
+
+    function triggerAnimations(n) {
+      if (n === 1) setTimeout(triggerBridge, 400);
+      if (n === 3) document.querySelectorAll('.flow-step').forEach(el => el.classList.add('visible'));
+      if (n === 7) conclusionEl.classList.add('visible');
+    }
+
+    function formatTime(s) {
+      return `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
+    }
+
+    function toggleTimer() {
+      if (timerRunning) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+      } else {
+        timerInterval = setInterval(() => {
+          timerSeconds++;
+          timerEl.textContent = formatTime(timerSeconds);
+          if (timerSeconds >= 420) {
+            timerEl.style.background = 'rgba(255,100,100,0.2)';
+            timerEl.style.color = '#ff6b6b';
+          } else if (timerSeconds >= 360) {
+            timerEl.style.background = 'rgba(201,162,39,0.2)';
+            timerEl.style.color = '#C9A227';
+          }
+        }, 1000);
+        timerRunning = true;
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      timerSeconds = 0;
+      timerEl.textContent = '00:00';
+      timerEl.style.background = 'rgba(0,168,89,0.1)';
+      timerEl.style.color = '#00A859';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      switch(e.key) {
+        case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown':
+          e.preventDefault(); goToSlide(currentSlide + 1); break;
+        case 'ArrowLeft': case 'ArrowUp': case 'PageUp':
+          e.preventDefault(); goToSlide(currentSlide - 1); break;
+        case 'Home': e.preventDefault(); goToSlide(1); break;
+        case 'End': e.preventDefault(); goToSlide(totalSlides); break;
+        case 'n': case 'N':
+          notesVisible = !notesVisible;
+          notesEl.classList.toggle('visible', notesVisible);
+          break;
+        case 't': case 'T': toggleTimer(); break;
+        case 'r': case 'R': resetTimer(); break;
+        case 'b': case 'B': bridgeAnimated = false; triggerBridge(); break;
+        case 'Escape': notesEl.classList.remove('visible'); notesVisible = false; break;
+      }
+    });
+
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        slides.forEach((slide, i) => {
+          const rect = slide.getBoundingClientRect();
+          if (rect.top < window.innerHeight / 2 && rect.bottom > window.innerHeight / 2) {
+            currentSlide = i + 1;
+            updateProgress();
+            updateNotes();
+            triggerAnimations(currentSlide);
+          }
+        });
+      }, 50);
+    });
+
+    updateProgress();
+    updateNotes();
+    setTimeout(() => { if (currentSlide === 1) triggerBridge(); }, 600);
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          triggerAnimations(parseInt(entry.target.id.split('-')[1]));
+        }
+      });
+    }, { threshold: 0.5 });
+    slides.forEach(slide => observer.observe(slide));
+
+    timerEl.addEventListener('click', toggleTimer);
+    timerEl.addEventListener('dblclick', resetTimer);
+  </script>
+</body>
+</html>
